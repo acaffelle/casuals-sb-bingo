@@ -1,12 +1,24 @@
-s<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Casuals Podcast - Super Bowl Bingo</title>
-  <!-- A clean, modern Google Font (Montserrat). You can change or remove as you wish -->
+
+  <!-- Google Font for a clean, modern look -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+  <link 
+    rel="stylesheet" 
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
+  >
+
+  <!-- Load html2canvas from a CDN for "Save as JPG" feature -->
+  <script 
+    src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" 
+    integrity="sha512-tUaR+NDZj8XZc7ZD/8JiEh7oJtNEHGuO819n0tHJXzqHONfZGF2xNSR+YwT8Y5ZhMoAgO1NBdX+vJuIoMFhABQ==" 
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
 
   <style>
     /* Basic Reset */
@@ -17,8 +29,8 @@ s<!DOCTYPE html>
     }
 
     body {
-      font-family: 'Montserrat', sans-serif; /* Using the Google Font */
-      background-color: #fafafa; 
+      font-family: 'Montserrat', sans-serif;
+      background-color: #fafafa;
       color: #333;
       padding: 20px;
     }
@@ -26,26 +38,24 @@ s<!DOCTYPE html>
     /* Header layout container */
     .header {
       display: flex;
-      flex-wrap: wrap;        /* Makes it responsive if screen is narrow */
+      flex-wrap: wrap;  /* Makes it responsive if screen is narrow */
       align-items: center;
       justify-content: center;
-      gap: 20px;              /* Space between image & text */
+      gap: 20px;        /* Space between image & text */
       margin-bottom: 30px;
     }
 
     .header img {
-      max-width: 180px;       /* Keeps the image a bit smaller */
-      border-radius: 8px;     /* Subtle rounded corners */
+      max-width: 180px;  /* Keeps the image smaller */
+      border-radius: 8px;
     }
 
-    /* Title area next to the image */
     .header-text h1 {
       font-weight: 700;
       font-size: 1.8rem;
       color: #222;
     }
 
-    /* Optionally add a subtitle or description if you want */
     .header-text p {
       font-weight: 400;
       font-size: 1rem;
@@ -53,7 +63,7 @@ s<!DOCTYPE html>
       margin-top: 5px;
     }
 
-    /* Main container to center the board + button */
+    /* Main container to center the board + buttons */
     .main-container {
       display: flex;
       flex-direction: column;
@@ -96,8 +106,16 @@ s<!DOCTYPE html>
       font-weight: 700;
     }
 
-    /* The "Generate New Card" button */
-    #generate-button {
+    /* Button styling */
+    .buttons {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap; /* If screen is narrow, they stack */
+      justify-content: center;
+    }
+
+    button {
       font-size: 1rem;
       padding: 10px 20px;
       border: none;
@@ -107,39 +125,43 @@ s<!DOCTYPE html>
       cursor: pointer;
       transition: background-color 0.2s ease;
     }
-
-    #generate-button:hover {
+    button:hover {
       background-color: #005fa3;
     }
+
+    /* Print-specific styling (optional):
+       If you wish to refine how the page prints, 
+       you can add @media print rules here. */
   </style>
 </head>
 <body>
-
   <!-- HEADER (Image + Title) -->
-  <div class="header">
+  <div class="header" id="capture-section">
     <img 
       src="https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/fa/99/e3/fa99e372-8d44-d17e-499f-2f352543e796/mza_13412663103546673445.jpg/1200x1200bf.webp" 
       alt="Casuals with Katie Nolan Podcast" 
     />
     <div class="header-text">
       <h1>Casuals Podcast - Super Bowl Bingo</h1>
-      <!-- Optional subtitle/description:
-      <p>Hosted by Katie Nolan</p> 
-      -->
+      <!-- <p>Optional subtitle or instructions here</p> -->
     </div>
   </div>
 
-  <!-- MAIN CONTENT -->
+  <!-- MAIN CONTENT: Bingo Grid & Buttons -->
   <div class="main-container">
     <!-- Bingo Board -->
     <div id="bingo-container"></div>
 
-    <!-- Generate Button -->
-    <button id="generate-button">Generate New Card</button>
+    <!-- Buttons Row -->
+    <div class="buttons">
+      <button id="generate-button">Generate New Card</button>
+      <button id="print-button">Print This Card</button>
+      <button id="save-jpg-button">Save as JPG</button>
+    </div>
   </div>
 
   <script>
-    // 1. List of 24 items from the transcript
+    // 1. Updated list with "Travis Kelce" spelled correctly
     const BINGO_OPTIONS = [
       "Missed Field Goal or Extra Point",
       "A Tush Push (Eagles QB Sneak)",
@@ -153,7 +175,6 @@ s<!DOCTYPE html>
       "Taylor Swift Proposes to Travis Kelce",
       "Coach Covers Mouth With Giant Menu",
       "Player Does a Snow Angel in Confetti",
-      "FREE", // We'll also insert this manually later, if you prefer the center only. But let's keep it here for demonstration.
       "Travis Kelce Proposes to Taylor Swift",
       "A Streaker",
       "Mahomes Gets Gifted a Call",
@@ -179,23 +200,22 @@ s<!DOCTYPE html>
       return array;
     }
 
+    // Generate Bingo card
     function generateBingoCard() {
       const container = document.getElementById("bingo-container");
       container.innerHTML = ""; // Clear old card
 
-      // Make a fresh copy and shuffle
+      // Shuffle a copy
       const shuffled = shuffleArray([...BINGO_OPTIONS]);
 
-      // We only need 24 items plus a single FREE space in the center
-      //  - If your array includes 'FREE', you can remove it first or skip it in the slice
-      const onlyRealItems = shuffled.filter(item => item !== "FREE");
-      const selected = onlyRealItems.slice(0, 24);
+      // We only need 24 items plus the FREE space in the middle
+      const selected = shuffled.slice(0, 24);
 
-      // Insert FREE exactly in the middle (12th index of 25 total)
+      // Insert "FREE" in the center (index 12 of 25 total)
       selected.splice(12, 0, "FREE");
 
       // Create cells
-      selected.forEach(item => {
+      selected.forEach((item) => {
         const cell = document.createElement("div");
         cell.classList.add("bingo-cell");
         if (item === "FREE") {
@@ -206,9 +226,37 @@ s<!DOCTYPE html>
       });
     }
 
-    // Generate on button click
+    // Handle print
+    function printCard() {
+      window.print();
+    }
+
+    // Handle save as JPG (using html2canvas)
+    function saveAsJpg() {
+      // We'll capture the entire BODY
+      const captureElement = document.body;
+
+      html2canvas(captureElement, { scale: 1 })
+      .then(canvas => {
+        // Convert to data URL in JPEG format
+        const dataURL = canvas.toDataURL("image/jpeg", 0.9);
+        // Create a link element and click it to download
+        const link = document.createElement("a");
+        link.download = "super-bowl-bingo.jpg";
+        link.href = dataURL;
+        link.click();
+      })
+      .catch(err => {
+        console.error("Could not save as JPG:", err);
+      });
+    }
+
+    // Attach event listeners
     document.getElementById("generate-button").addEventListener("click", generateBingoCard);
-    // Generate on page load
+    document.getElementById("print-button").addEventListener("click", printCard);
+    document.getElementById("save-jpg-button").addEventListener("click", saveAsJpg);
+
+    // Generate an initial card on page load
     window.addEventListener("DOMContentLoaded", generateBingoCard);
   </script>
 </body>
