@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Super Bowl Bingo</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 40px;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    #bingo-container {
+      display: inline-grid;
+      grid-template-columns: repeat(5, 150px);
+      grid-gap: 10px;
+      justify-content: center;
+    }
+    .bingo-cell {
+      width: 150px;
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid #333;
+      font-size: 14px;
+      text-align: center;
+      padding: 5px;
+      box-sizing: border-box;
+      background-color: #f9f9f9;
+    }
+    .free-space {
+      background-color: gold;
+      font-weight: bold;
+    }
+    button {
+      margin-top: 20px;
+      font-size: 16px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Super Bowl Bingo</h1>
+  <div id="bingo-container"></div>
+  <button id="generate-button">Generate New Card</button>
+
+  <script>
+    // 1. List of 24 items from the transcript
+    const BINGO_OPTIONS = [
+      "Mahomes Gets Gifted a Call",
+      "A Cutaway of an Emotional Fan",
+      "Taylor Swift Dancing",
+      "Lil Wayne Appearance",
+      "A 30+ Yard Saquon Run",
+      "Mention of the Reverse Hurdle",
+      "A Streaker",
+      "Travis Kelsey Proposes to Taylor Swift",
+      "Taylor Swift Proposes to Travis Kelsey",
+      "Tom Brady Mentions Old Patriots Team",
+      "A Tush Push (Eagles QB Sneak)",
+      "An AI Commercial",
+      "Sideline Reporter Mentions Brady",
+      "Paul Rudd Cameo",
+      "Jackson Mahomes TikTok",
+      "Trump Sighting or Reference",
+      "Player Does a Snow Angel in Confetti",
+      "Bradley Cooper Sighting",
+      "Missed Field Goal or Extra Point",
+      "A Safety Happens (2 points)",
+      "Coach Covers Mouth With Giant Menu",
+      "A Taylor Swift Pun",
+      "Ref Mic Malfunction",
+      "Cutaway to Fan Sign/Mardi Gras/Bourbon St.",
+    ];
+
+    // 2. Shuffle function (Fisher-Yates)
+    function shuffleArray(array) {
+      let currentIndex = array.length, randomIndex;
+      while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+      }
+      return array;
+    }
+
+    // 3. Generate Bingo card
+    function generateBingoCard() {
+      const container = document.getElementById("bingo-container");
+      container.innerHTML = ""; // Clear old card
+
+      // Shuffle a copy of our BINGO_OPTIONS array
+      const shuffled = shuffleArray([...BINGO_OPTIONS]);
+
+      // We only need 24 items + 1 FREE space = 25 total for a 5x5
+      // Slice the first 24 from the shuffled array
+      const selected = shuffled.slice(0, 24);
+
+      // Insert "FREE" in the center (index 12 of a 25-element list)
+      selected.splice(12, 0, "FREE");
+
+      // Now create & append cells
+      selected.forEach((item, index) => {
+        const cell = document.createElement("div");
+        cell.classList.add("bingo-cell");
+        if (item === "FREE") {
+          cell.classList.add("free-space");
+        }
+        cell.textContent = item;
+        container.appendChild(cell);
+      });
+    }
+
+    // 4. Button to generate new card
+    document.getElementById("generate-button").addEventListener("click", generateBingoCard);
+
+    // 5. Generate an initial card on page load
+    window.addEventListener("DOMContentLoaded", generateBingoCard);
+  </script>
+</body>
+</html>
