@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Casuals Podcast - Super Bowl Bingo</title>
 
-  
-
   <!-- Google Font for a clean, modern look -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link 
@@ -27,6 +25,7 @@
       background-color: #fafafa;
       color: #333;
       padding: 20px;
+      text-align: center; /* Center text in general */
     }
 
     /* Header layout container */
@@ -50,17 +49,17 @@
       color: #222;
     }
 
-    /* Main container to center the board + buttons */
+    /* Main container centers the board + buttons below */
     .main-container {
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
-    /* Bingo grid */
+    /* Bingo grid: 5 columns, but adjustable cell size */
     #bingo-container {
       display: grid;
-      grid-template-columns: repeat(5, 160px);
+      grid-template-columns: repeat(5, 130px);
       grid-gap: 10px;
       justify-content: center;
       margin-bottom: 20px;
@@ -68,18 +67,19 @@
 
     /* Individual bingo cell */
     .bingo-cell {
-      width: 160px;
-      height: 100px;
+      width: 130px;
+      height: 90px;
       display: flex;
       justify-content: center;
       align-items: center;
       border: 2px solid #ccc;
       border-radius: 6px;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       text-align: center;
       padding: 8px;
       background-color: #fff;
       transition: background-color 0.2s ease;
+      word-wrap: break-word;
     }
 
     .bingo-cell:hover {
@@ -94,11 +94,11 @@
 
     /* Buttons row */
     .buttons {
-      margin-bottom: 20px;
       display: flex;
       gap: 10px;
       flex-wrap: wrap; 
       justify-content: center;
+      margin-bottom: 20px;
     }
 
     button {
@@ -113,6 +113,20 @@
     }
     button:hover {
       background-color: #005fa3;
+    }
+
+    /* Responsive adjustments for smaller screens */
+    @media (max-width: 600px) {
+      #bingo-container {
+        grid-template-columns: repeat(5, 70px);
+        grid-gap: 5px;
+      }
+      .bingo-cell {
+        width: 70px;
+        height: 60px;
+        font-size: 0.7rem;
+        padding: 5px;
+      }
     }
   </style>
 </head>
@@ -191,7 +205,7 @@
 
       // We only need 24 items plus one FREE space
       const selected = shuffled.slice(0, 24);
-      selected.splice(12, 0, "FREE"); // insert FREE in center (index 12 of 25)
+      selected.splice(12, 0, "FREE"); // insert FREE in center (index 12)
 
       // Create cells
       selected.forEach(item => {
@@ -210,12 +224,9 @@
       window.print();
     }
 
-        }
-
     // 5. Attach event listeners
     document.getElementById("generate-button").addEventListener("click", generateBingoCard);
     document.getElementById("print-button").addEventListener("click", printCard);
-    document.getElementById("save-jpg-button").addEventListener("click", saveAsJpg);
 
     // Generate an initial card on page load
     window.addEventListener("DOMContentLoaded", generateBingoCard);
