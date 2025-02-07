@@ -3,84 +3,169 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Super Bowl Bingo</title>
+  <title>Casuals Podcast - Super Bowl Bingo</title>
+  <!-- A clean, modern Google Font (Montserrat). You can change or remove as you wish -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+
   <style>
+    /* Basic Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: sans-serif;
-      margin: 40px;
-      text-align: center;
+      font-family: 'Montserrat', sans-serif; /* Using the Google Font */
+      background-color: #fafafa; 
+      color: #333;
+      padding: 20px;
     }
-    h1 {
-      margin-bottom: 20px;
+
+    /* Header layout container */
+    .header {
+      display: flex;
+      flex-wrap: wrap;        /* Makes it responsive if screen is narrow */
+      align-items: center;
+      justify-content: center;
+      gap: 20px;              /* Space between image & text */
+      margin-bottom: 30px;
     }
+
+    .header img {
+      max-width: 180px;       /* Keeps the image a bit smaller */
+      border-radius: 8px;     /* Subtle rounded corners */
+    }
+
+    /* Title area next to the image */
+    .header-text h1 {
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: #222;
+    }
+
+    /* Optionally add a subtitle or description if you want */
+    .header-text p {
+      font-weight: 400;
+      font-size: 1rem;
+      color: #555;
+      margin-top: 5px;
+    }
+
+    /* Main container to center the board + button */
+    .main-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Bingo grid */
     #bingo-container {
-      display: inline-grid;
-      grid-template-columns: repeat(5, 150px);
+      display: grid;
+      grid-template-columns: repeat(5, 160px);
       grid-gap: 10px;
       justify-content: center;
+      margin-bottom: 20px;
     }
+
+    /* Individual bingo cell */
     .bingo-cell {
-      width: 150px;
+      width: 160px;
       height: 100px;
       display: flex;
       justify-content: center;
       align-items: center;
-      border: 2px solid #333;
-      font-size: 14px;
+      border: 2px solid #ccc;
+      border-radius: 6px;
+      font-size: 0.9rem;
       text-align: center;
-      padding: 5px;
-      box-sizing: border-box;
-      background-color: #f9f9f9;
+      padding: 8px;
+      background-color: #fff;
+      transition: background-color 0.2s ease;
     }
+
+    /* Highlight on hover */
+    .bingo-cell:hover {
+      background-color: #f0f0f0;
+    }
+
+    /* FREE space styling */
     .free-space {
-      background-color: gold;
-      font-weight: bold;
+      background-color: #FFD700;
+      font-weight: 700;
     }
-    button {
-      margin-top: 20px;
-      font-size: 16px;
+
+    /* The "Generate New Card" button */
+    #generate-button {
+      font-size: 1rem;
       padding: 10px 20px;
+      border: none;
+      background-color: #0077cc;
+      color: #fff;
+      border-radius: 6px;
       cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    #generate-button:hover {
+      background-color: #005fa3;
     }
   </style>
 </head>
 <body>
-  <h1>Casuals Podcast - Super Bowl Bingo</h1>
+
+  <!-- HEADER (Image + Title) -->
+  <div class="header">
     <img 
-    src="https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/fa/99/e3/fa99e372-8d44-d17e-499f-2f352543e796/mza_13412663103546673445.jpg/1200x1200bf.webp" 
-    alt="Casuals with Katie Nolan Podcast" 
-    style="max-width:300px; margin-bottom:20px;"
-  />
-  <div id="bingo-container"></div>
-  <button id="generate-button">Generate New Card</button>
+      src="https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/fa/99/e3/fa99e372-8d44-d17e-499f-2f352543e796/mza_13412663103546673445.jpg/1200x1200bf.webp" 
+      alt="Casuals with Katie Nolan Podcast" 
+    />
+    <div class="header-text">
+      <h1>Casuals Podcast - Super Bowl Bingo</h1>
+      <!-- Optional subtitle/description:
+      <p>Hosted by Katie Nolan</p> 
+      -->
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-container">
+    <!-- Bingo Board -->
+    <div id="bingo-container"></div>
+
+    <!-- Generate Button -->
+    <button id="generate-button">Generate New Card</button>
+  </div>
 
   <script>
     // 1. List of 24 items from the transcript
     const BINGO_OPTIONS = [
-      "Mahomes Gets Gifted a Call",
-      "A Cutaway of an Emotional Fan",
-      "Taylor Swift Dancing",
-      "Lil Wayne Appearance",
-      "A 30+ Yard Saquon Run",
-      "Mention of the Reverse Hurdle",
-      "A Streaker",
-      "Travis Kelsey Proposes to Taylor Swift",
-      "Taylor Swift Proposes to Travis Kelsey",
-      "Tom Brady Mentions Old Patriots Team",
-      "A Tush Push (Eagles QB Sneak)",
-      "An AI Commercial",
-      "Sideline Reporter Mentions Brady",
-      "Paul Rudd Cameo",
-      "Jackson Mahomes TikTok",
-      "Trump Sighting or Reference",
-      "Player Does a Snow Angel in Confetti",
-      "Bradley Cooper Sighting",
       "Missed Field Goal or Extra Point",
-      "A Safety Happens (2 points)",
-      "Coach Covers Mouth With Giant Menu",
-      "A Taylor Swift Pun",
+      "A Tush Push (Eagles QB Sneak)",
+      "Trump Sighting or Reference",
       "Ref Mic Malfunction",
+      "Lil Wayne Appearance",
+      "A Safety Happens (2 points)",
+      "A Cutaway of an Emotional Fan",
+      "Mention of the Reverse Hurdle",
+      "A Taylor Swift Pun",
+      "Taylor Swift Proposes to Travis Kelsey",
+      "Coach Covers Mouth With Giant Menu",
+      "Player Does a Snow Angel in Confetti",
+      "FREE", // We'll also insert this manually later, if you prefer the center only. But let's keep it here for demonstration.
+      "Travis Kelsey Proposes to Taylor Swift",
+      "A Streaker",
+      "Mahomes Gets Gifted a Call",
+      "Tom Brady Mentions Old Patriots Team",
+      "Paul Rudd Cameo",
+      "Sideline Reporter Mentions Brady",
+      "Bradley Cooper Sighting",
+      "Jackson Mahomes TikTok",
+      "Taylor Swift Dancing",
       "Cutaway to Fan Sign/Mardi Gras/Bourbon St.",
+      "An AI Commercial",
+      "A 30+ Yard Saquon Run"
     ];
 
     // 2. Shuffle function (Fisher-Yates)
@@ -94,23 +179,23 @@
       return array;
     }
 
-    // 3. Generate Bingo card
     function generateBingoCard() {
       const container = document.getElementById("bingo-container");
       container.innerHTML = ""; // Clear old card
 
-      // Shuffle a copy of our BINGO_OPTIONS array
+      // Make a fresh copy and shuffle
       const shuffled = shuffleArray([...BINGO_OPTIONS]);
 
-      // We only need 24 items + 1 FREE space = 25 total for a 5x5
-      // Slice the first 24 from the shuffled array
-      const selected = shuffled.slice(0, 24);
+      // We only need 24 items plus a single FREE space in the center
+      //  - If your array includes 'FREE', you can remove it first or skip it in the slice
+      const onlyRealItems = shuffled.filter(item => item !== "FREE");
+      const selected = onlyRealItems.slice(0, 24);
 
-      // Insert "FREE" in the center (index 12 of a 25-element list)
+      // Insert FREE exactly in the middle (12th index of 25 total)
       selected.splice(12, 0, "FREE");
 
-      // Now create & append cells
-      selected.forEach((item, index) => {
+      // Create cells
+      selected.forEach(item => {
         const cell = document.createElement("div");
         cell.classList.add("bingo-cell");
         if (item === "FREE") {
@@ -121,10 +206,9 @@
       });
     }
 
-    // 4. Button to generate new card
+    // Generate on button click
     document.getElementById("generate-button").addEventListener("click", generateBingoCard);
-
-    // 5. Generate an initial card on page load
+    // Generate on page load
     window.addEventListener("DOMContentLoaded", generateBingoCard);
   </script>
 </body>
