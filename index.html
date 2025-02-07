@@ -5,13 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Casuals Podcast - Super Bowl Bingo</title>
 
-  <!-- Load html2canvas from a CDN for "Save as JPG" feature -->
-  <script 
-    src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" 
-    integrity="sha512-tUaR+NDZj8XZc7ZD/8JiEh7oJtNEHGuO819n0tHJXzqHONfZGF2xNSR+YwT8Y5ZhMoAgO1NBdX+vJuIoMFhABQ==" 
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  ></script>
+  
 
   <!-- Google Font for a clean, modern look -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -144,7 +138,6 @@
     <div class="buttons">
       <button id="generate-button">Generate New Card</button>
       <button id="print-button">Print This Card</button>
-      <button id="save-jpg-button">Save as JPG</button>
     </div>
   </div>
 
@@ -217,27 +210,9 @@
       window.print();
     }
 
-    // 5. Save as JPG using html2canvas
-    function saveAsJpg() {
-      // We'll capture the entire BODY
-      const captureElement = document.body;
+        }
 
-      html2canvas(captureElement, { scale: 1 })
-      .then(canvas => {
-        // Convert to data URL in JPEG format
-        const dataURL = canvas.toDataURL("image/jpeg", 0.9);
-        // Create a link element and click it to download
-        const link = document.createElement("a");
-        link.download = "super-bowl-bingo.jpg";
-        link.href = dataURL;
-        link.click();
-      })
-      .catch(err => {
-        console.error("Could not save as JPG:", err);
-      });
-    }
-
-    // 6. Attach event listeners
+    // 5. Attach event listeners
     document.getElementById("generate-button").addEventListener("click", generateBingoCard);
     document.getElementById("print-button").addEventListener("click", printCard);
     document.getElementById("save-jpg-button").addEventListener("click", saveAsJpg);
